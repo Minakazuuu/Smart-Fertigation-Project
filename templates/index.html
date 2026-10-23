@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DripGrow | Fertigation Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#">
+        <span class="brand-mark"><i class="bi bi-leaf-fill"></i></span>
+        <span><strong>DripFerti</strong><small>SMART FERTIGATION</small></span>
+      </a>
+
+      <div class="nav-caption">MENU UTAMA</div>
+      <nav class="nav flex-column app-nav">
+        <a class="nav-link active" href="#"><i class="bi bi-grid-1x2-fill"></i> Overview</a>
+        <a class="nav-link" href="#sensor"><i class="bi bi-moisture"></i> Monitoring Sensor</a>
+        <a class="nav-link" href="#irrigation"><i class="bi bi-droplet-half"></i> Irigasi</a>
+        <a class="nav-link" href="#history"><i class="bi bi-clock-history"></i> Riwayat Data</a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="system-mini">
+          <span class="pulse-dot"></span>
+          <div><strong>System online</strong><small>Smart Fertigation Ready!</small></div>
+        </div>
+        <small class="sidebar-foot">Kelompok 3 P1 SIBI</small>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="btn mobile-menu d-lg-none" id="menuToggle" aria-label="Buka menu"><i class="bi bi-list"></i></button>
+        <div>
+          <div class="eyebrow">SMART FERTIGATION</div>
+          <h1>Dashboard Overview</h1>
+        </div>
+      </header>
+
+      <section class="welcome-panel">
+        <div class="welcome-copy">
+          <span class="welcome-tag"><i class="bi bi-sun"></i> DRIP FERTIGATION</span>
+          <h2>Tetesan Presisi,<br><span>Panen Mendominasi [kelas king]</span></h2>
+          <p>Pantau kelembapan tanah, penggunaan air dan irigasi otomatis</p>
+        </div>
+        
+        <div class="banner-video">
+          <video autoplay muted loop playsinline>
+            <source
+              src="{{ url_for('static', filename='video/smartfertigation.mp4') }}"
+              type="video/mp4"
+            >
+            Browser kamu tidak mendukung video.
+          </video>
+        </div>
+
+        <div class="welcome-art" aria-hidden="true">
+          <div class="sun"></div>
+          <div class="hill hill-back"></div>
+          <div class="hill hill-front"></div>
+          <div class="plant plant-one"><span></span><i></i></div>
+          <div class="plant plant-two"><span></span><i></i></div>
+          <div class="water-drop"><i class="bi bi-droplet-fill"></i></div>
+        </div>
+      </section>
+
+      <section class="section-heading" id="sensor">
+        <div><h2>Conditions</h2></div>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card">
+          <div class="stat-top"><span class="stat-icon moisture"><i class="bi bi-moisture"></i></span><span class="stat-label">KELEMBAPAN TANAH</span></div>
+          <div class="stat-value"><span id="moistureValue">67</span><small>%</small></div>
+          <div class="stat-bottom"><span class="status-pill status-good"><i class="bi bi-check-circle-fill"></i> Ideal</span><span class="muted">Target 50–70%</span></div>
+          <div class="mini-track"><span style="width:62%"></span></div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-top"><span class="stat-icon flow"><i class="bi bi-water"></i></span><span class="stat-label">DEBIT AIR</span></div>
+          <div class="stat-value"><span id="flowValue">6.7</span><small>L/min</small></div>
+          <div class="stat-bottom"><span class="status-pill status-good"><i class="bi bi-arrow-up-right"></i> Mengalir</span><span class="muted">YF-S201 · simulasi</span></div>
+          <div class="mini-track flow-track"><span style="width:45%"></span></div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-top"><span class="stat-icon volume"><i class="bi bi-droplet-half"></i></span><span class="stat-label">TOTAL AIR HARI INI</span></div>
+          <div class="stat-value"><span id="volumeValue">67.0</span><small>L</small></div>
+          <div class="stat-bottom"><span class="status-pill status-neutral"><i class="bi bi-calendar-check"></i> Hari ini</span><span class="muted">Akumulasi simulasi</span></div>
+          <div class="mini-track volume-track"><span style="width:68%"></span></div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-top"><span class="stat-icon valve"><i class="bi bi-toggles"></i></span><span class="stat-label">SOLENOID VALVE</span></div>
+          <div class="stat-value state-value" id="valveValue">OFF</div>
+          <div class="stat-bottom"><span class="status-pill status-neutral" id="valveStatus"><i class="bi bi-pause-circle-fill"></i> Tidak menyiram</span><span class="muted">Kontrol manual demo</span></div>
+          <button class="valve-button" id="valveToggle"><i class="bi bi-power"></i> Nyalakan simulasi</button>
+        </article>
+      </section>
+
+      <section class="charts-grid">
+        <article class="panel chart-panel">
+          <div class="panel-heading">
+            <div><h3>Tren kelembapan tanah</h3><p>Perubahan kelembapan selama 12 jam terakhir</p></div>
+            <span class="panel-icon"><i class="bi bi-graph-up-arrow"></i></span>
+          </div>
+          <div class="chart-wrap"><canvas id="moistureChart"></canvas></div>
+          <div class="chart-legend"><span class="legend-dot"></span> Kelembapan tanah <span class="legend-note">Satuan: %</span></div>
+        </article>
+        <article class="panel chart-panel">
+          <div class="panel-heading">
+            <div><h3>Penggunaan air</h3><p>Volume irigasi per jam hari ini</p></div>
+            <span class="panel-icon blue"><i class="bi bi-droplet"></i></span>
+          </div>
+          <div class="chart-wrap"><canvas id="waterChart"></canvas></div>
+          <div class="chart-legend"><span class="legend-dot blue-dot"></span> Volume air <span class="legend-note">Satuan: liter</span></div>
+        </article>
+      </section>
+
+      <section class="bottom-grid" id="irrigation">
+        <article class="panel irrigation-panel">
+          <div class="panel-heading">
+            <div><h3>Status</h3><p>Kondisi alat dan tanah</p></div>
+            <span class="status-pill status-good" id="irrigationBadge">Siaga</span>
+          </div>
+          <div class="irrigation-content">
+            <div class="irrigation-illustration"><i class="bi bi-moisture"></i><span class="soil-line"></span><span class="water-line"></span></div>
+            <div class="irrigation-details">
+              <div class="detail-row"><span>Solenoid Valve Status</span><strong id="valveDetail">Tertutup</strong></div>
+              <div class="detail-row"><span>Control Mode</span><strong>Simulasi manual</strong></div>
+              <div class="detail-row"><span>Flow Details</span><strong id="flowDetail">1.8 L/min</strong></div>
+              <div class="detail-row"><span>Last update</span><strong id="lastUpdated">—</strong></div>
+            </div>
+          </div>
+        </article>
+        <article class="panel history-panel" id="history">
+          <div class="panel-heading"><div><h3>Aktivitas terbaru</h3><p>Catatan sistem</p></div><a href="#history" class="text-link">Lihat semua <i class="bi bi-arrow-right"></i></a></div>
+          <div class="activity-list" id="activityList">
+            <div class="activity-item"><span class="activity-icon green"><i class="bi bi-check2-circle"></i></span><div><strong>Pembacaan sensor diterima</strong><small>Kelembapan tanah 62%</small></div><time>09:42</time></div>
+            <div class="activity-item"><span class="activity-icon blue"><i class="bi bi-droplet"></i></span><div><strong>Pengukuran debit air</strong><small>Debit 1.8 L/min</small></div><time>09:30</time></div>
+            <div class="activity-item"><span class="activity-icon amber"><i class="bi bi-info-circle"></i></span><div><strong>Sistem berjalan dalam simulasi</strong><small>Belum terhubung ke perangkat fisik</small></div><time>09:00</time></div>
+          </div>
+        </article>
+      </section>
+
+      <footer class="footer"><span>© 2026 Smart Fertigation System</span></footer>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  <script>
+    document.getElementById('todayLabel').textContent = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date());
+  </script>
+</body>
+</html>
